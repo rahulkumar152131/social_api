@@ -8,6 +8,11 @@ export default class UserRepository {
     // Method for handling user sign up
     async signUp(user) {
         try {
+            const alreadyRegisteredEmail = await userModel.findOne({ email: user.email });
+            // console.log(alreadyRegisteredEmail);
+            if (alreadyRegisteredEmail) {
+                return { success: false, msg: 'Email is already Registered' };
+            }
             const newUser = new userModel(user);
             await newUser.save();
 
@@ -33,10 +38,15 @@ export default class UserRepository {
     }
 
     // Method for updating user details
-    async resetDetails(email, updatedDetails) {
+    async resetDetails(userID, updatedDetails) {
         try {
-            const user = await userModel.findOneAndUpdate({ email: email }, updatedDetails, { new: true, select: { password: 0 } });
-
+            const alreadyRegisteredEmail = await userModel.findOne({ email: updatedDetails.email });
+            if (alreadyRegisteredEmail) {
+                return { success: false, msg: 'Email is already Registered' };
+            }
+            console.log(updatedDetails);
+            const user = await userModel.findByIdAndUpdate(userID, updatedDetails, { new: true, select: { password: 0 } });
+            console.log(user);
             // Check if the user exists
             if (!user) {
                 return { success: false, msg: 'User not found' };
@@ -45,6 +55,7 @@ export default class UserRepository {
             }
         } catch (err) {
             // Handle database errors
+            console.log(err);
             throw new ApplicationError('Something went wrong with the database', 500);
         }
     }

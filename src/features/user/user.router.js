@@ -18,7 +18,7 @@ userRouter.post('/sign-up', upload.single('profileImage'), signUpFormValidate, u
 userRouter.post('/sign-in', userController.signIn);
 
 // Route for resetting user details
-userRouter.put('/reset-details', jwtAuth, upload.single('profileImage'), signUpFormValidate, userController.resetDetails);
+userRouter.put('/reset-details', jwtAuth, upload.single('profileImage'), userController.resetDetails);
 
 // Route for deleting user account
 userRouter.delete('/delete-account', jwtAuth, userController.deleteAccount);
